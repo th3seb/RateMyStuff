@@ -1,0 +1,12 @@
+{
+    "name": "ratemystuff",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "dev": "tsc -w --target ESNext --outDir dist src/index.ts"
+    },
+    "dependencies": {
+        "typescript": "^4.6.3"
+    },
+    "author": "th3seb"
+}
