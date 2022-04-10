@@ -8,16 +8,16 @@ export interface IMovie {
 const fakeDB: { movies: IMovie[] } = {
     movies: [
         {
-            name: "Spidr Man",
-            pic: "helo",
-            desc: "Web",
-            rating: 5
+            name: "Spider Man",
+            pic: "https://m.media-amazon.com/images/I/51ABaqM-xWL._AC_.jpg",
+            desc: "Spider-Man is an old Movie",
+            rating: 4
         },
         {
-            name: "Mtrix",
-            pic: "https://images-ext-2.discordapp.net/external/89SFGYfSBL-05DtiZLHiCufnfUM2kSoxZ_NdZU2JIOg/https/cdn.pixabay.com/photo/2020/07/02/04/31/matrix-5361690__340.png",
-            desc: "Banana",
-            rating: 1
+            name: "Matrix",
+            pic: "https://m.media-amazon.com/images/I/51XE3ed1dkL._AC_SY445_.jpg",
+            desc: "Matrix the Movie",
+            rating: 5
         }
     ]
 };

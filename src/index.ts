@@ -1,24 +1,16 @@
 import { getAllMovies, IMovie } from "./db.js";
-import { img } from "./img.js";
-import * as WebUI from "./WebUI/dist/index.js";
+import * as WebUI from "./components/WebUI/dist/index.js";
+import { header } from "./components/header.js";
+import { movieElement } from "./components/movieElement.js";
+import { spacerTop } from "./components/spacerTop.js";
 
 function moviePage() {
     const movieArray = getAllMovies();
-    const cardTheme = WebUI.theme();
-    cardTheme.setRule("border", "solid black 2px");
     const page = WebUI.div(
-        WebUI.h1("Deine").color("#000000"),
-        createMovieElement(movieArray[0])
+        header(),
+        spacerTop(),
+        WebUI.div(movieElement(movieArray[0]), movieElement(movieArray[1]))
     );
-
-    function createMovieElement(movie: IMovie) {
-        return WebUI.div(
-            WebUI.h1(movie.name),
-            img(movie.pic, 300, 300),
-            WebUI.p(movie.desc),
-            WebUI.h2(movie.rating.toString())
-        ).applyTheme(cardTheme);
-    }
     document.body.append(page.HTML);
 }
 
