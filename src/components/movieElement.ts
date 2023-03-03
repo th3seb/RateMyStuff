@@ -1,34 +1,21 @@
-import { IMovie } from "../db.js";
-import { img } from "./img.js";
-import { div, h1, h2, p, theme } from "./WebUI/dist/index.js";
+import { Div } from "../framework/div.js";
+import { H1 } from "../framework/headings.js";
+import { Img } from "../framework/img.js";
+import { Paragraph } from "../framework/p.js";
 
-class MovieElement {
-    _name: string;
-    _pic: string;
-    _desc: string;
-    _rating: number;
-    _theme = theme();
-
-    constructor(movie: IMovie) {
-        this._name = movie.name;
-        this._pic = movie.pic;
-        this._desc = movie.desc;
-        this._rating = movie.rating;
-        this._theme.setRule("border", "solid black 1px").setRule("borderRadius", "10px");
-    }
-
-    create() {
-        return div(
-            h1(this._name),
-            img(this._pic, this._name),
-            p(this._desc),
-            h2(this._rating.toString())
-        )
-            .width("25em")
-            .applyTheme(this._theme);
-    }
-}
-
-export function movieElement(movie: IMovie) {
-    return new MovieElement(movie).create();
+export function Movie(name: string, pic: string, desc: string, rating: number) {
+    return Div(
+        Img(pic, name).addStyle("border-radius", "5px").addStyle("width", "275px").addStyle("height", "380px"),
+        Paragraph(`Rating: ${rating}/10`),
+        H1(name).addStyle("width", "275px"),
+        Div(Paragraph(desc)).addStyle("width", "265px").addStyle("margin", "0 auto")
+    )
+        .addStyle("border-radius", "10px")
+        .addStyle("margin", "10px")
+        .addStyle("width", "300px")
+        .addStyle("height", "600px")
+        .addStyle("overflow-y", "auto")
+        .addStyle("padding", "10px")
+        .addStyle("text-align", "center")
+        .addStyle("display", "inline-block");
 }
