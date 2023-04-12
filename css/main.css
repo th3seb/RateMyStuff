@@ -1,0 +1,13 @@
+.movieElement h1 {
+    font-family: 'Author-Semibold' !important;
+}
+
+.movieElement .description p {
+    font-family: 'Author-light' !important;
+}
+
+.movieElement {
+    background-color: rgb(44, 44, 44);
+    color: white;
+;
+}
