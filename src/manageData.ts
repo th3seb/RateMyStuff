@@ -1,24 +1,32 @@
 import express from "express";
 import cors from "cors";
 import Database from "better-sqlite3";
-import Movie from "../public/framework/types.js";
+import { readFileSync } from "fs";
+
+interface Movie {
+    movie_id: number;
+    name: string;
+    img: string;
+    description: string;
+    rating: number;
+}
 
 const app = express();
 const port = 3000;
-const db = new Database("../../../db/ratemystuff.db");
+const db = new Database("../../db/ratemystuff.db");
 
 db.pragma("journal_mode = WAL");
 let index = 1;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("../../../"));
+app.use(express.static("../../"));
 
 //Functions
 
 //All
 app.get("/", (req, res) => {
-    res.sendFile("./html/index.html", { root: "../../../" });
+    res.sendFile("./public/html/index.html", { root: "../../" });
 });
 
 app.listen(port, () => {
@@ -50,22 +58,8 @@ app.delete("/movies", (req, res) => {
 
 app.get("/movies/:id", (req, res) => {
     let { id } = req.params;
-    const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../fonts/css/author.css">
-        <link rel="stylesheet" href="../css/main.css">
-        <script src="../dist/public/movie.js" type="module" defer></script>
-        <title>${id}</title>
-      </head>
-    </html>
-  `;
+    const html = readFileSync("../../public/html/movie.html", { encoding: "utf-8" });
     res.send(html);
-    //res.sendFile(`./html/movie.html` + `?id=${id}`, {  root: "../../../",headers: {"Content-Type": "text/html"},query: { id: id }});
 });
 
 app.get("*", (req, res) => {
