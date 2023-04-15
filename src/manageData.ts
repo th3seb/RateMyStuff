@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import Database from "better-sqlite3";
-import { readFileSync } from "fs";
+import { compareSync, hashSync } from "bcrypt";
 
 interface Movie {
     movie_id: number;
@@ -13,24 +13,43 @@ interface Movie {
 
 const app = express();
 const port = 3000;
-const db = new Database("../../db/ratemystuff.db");
-
+const db = new Database("./db/ratemystuff.db");
+const root: string = ".";
 db.pragma("journal_mode = WAL");
 let index = 1;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("../../"));
+app.use(express.static("."));
 
 //Functions
 
 //All
 app.get("/", (req, res) => {
-    res.sendFile("./public/html/index.html", { root: "../../" });
+    res.sendFile("./public/html/index.html", { root: root });
 });
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
+});
+
+//Login
+app.get("/login", (req, res) => {
+    res.sendFile("./public/html/login.html", { root: root });
+});
+
+app.post("/login", (req, res) => {
+    let { username, password }: { username: string; password: string } = req.body;
+    let pa: { password: string } = db.prepare("SELECT password FROM users WHERE username = ?").get(username) as { password: string };
+    pa !== undefined && compareSync(password, pa.password) ? res.redirect("http://localhost:3000/") : res.send("false");
+});
+
+//Register
+app.post("/register", (req, res) => {
+    let { username, password }: { username: string; password: string } = req.body;
+    let encryptedPassword = hashSync(password, 10);
+    db.prepare("Insert into users (username, password) Values (?, ?)").run(username, encryptedPassword);
+    res.redirect("http://localhost:3000/");
 });
 
 //Movies
@@ -58,10 +77,11 @@ app.delete("/movies", (req, res) => {
 
 app.get("/movies/:id", (req, res) => {
     let { id } = req.params;
-    const html = readFileSync("../../public/html/movie.html", { encoding: "utf-8" });
-    res.send(html);
+    if (db.prepare("SELECT * FROM movies WHERE movie_id = ?").get(id) === undefined) {
+        res.redirect("http://localhost:3000/error?id=404");
+    } else res.sendFile("./public/html/movie.html", { root: root });
 });
 
 app.get("*", (req, res) => {
-    res.send("404: Not Found!");
+    res.sendFile("./public/html/error.html", { root: root });
 });

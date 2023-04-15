@@ -1,16 +1,25 @@
 import { Movie as MovieElement } from "./components/movieElement.js";
+import A from "./framework/a.js";
 import { HTML } from "./framework/base.js";
-import { InButton } from "./framework/button.js";
-import { Div } from "./framework/div.js";
-import { InNumber } from "./framework/number.js";
-import { InText, TextArea } from "./framework/text.js";
+import InButton from "./framework/button.js";
+import Div from "./framework/div.js";
+import InNumber from "./framework/number.js";
+import InText, { TextArea } from "./framework/text.js";
 import Movie from "./framework/types.js";
-import { MovieHandler } from "./movieHandler.js";
+import { MovieHandler, express } from "./movieHandler.js";
 
 const div: HTML = Div();
 const movieHandler = new MovieHandler();
 
 function onStart() {
+    const login = InButton("Login");
+
+    login.addEventListener("click", () => {
+        A()
+            .addAttribute("href", express + "login")
+            .getComponent()
+            .click();
+    });
     const movies = movieHandler.getMovies();
     movies.then((data) => {
         data.forEach((movie: Movie) => {
@@ -56,6 +65,7 @@ function onStart() {
     const body: HTMLElement | null = document.querySelector("body");
     if (!body) return;
 
+    body.appendChild(Div(login).addStyle("text-align", "right").getComponent());
     body.appendChild(div.getComponent());
     body.appendChild(saveMovieDiv.getComponent());
     body.appendChild(deleteMovieDiv.getComponent());

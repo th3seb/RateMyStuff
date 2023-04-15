@@ -1,8 +1,8 @@
 import { Base } from "../framework/base.js";
-import { Div } from "../framework/div.js";
+import Div from "../framework/div.js";
 import { H1 } from "../framework/headings.js";
-import { Img } from "../framework/img.js";
-import { Paragraph } from "../framework/p.js";
+import Img from "../framework/img.js";
+import Paragraph from "../framework/p.js";
 
 export function Movie(
     movie_id: string,

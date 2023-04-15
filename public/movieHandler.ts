@@ -2,7 +2,7 @@ import { HTML } from "./framework/base.js";
 import { MovieElement, Movie } from "./components/movieElement.js";
 import IMovie, { child } from "./framework/types.js";
 
-const express: string = "http://localhost:3000/";
+export const express: string = "http://localhost:3000/";
 
 export class MovieHandler {
     constructor() {}

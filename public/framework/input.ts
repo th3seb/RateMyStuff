@@ -1,7 +1,7 @@
 import { Base } from "./base.js";
 import { InputAttributes, child } from "./types.js";
 
-export class Input extends Base {
+export default class Input extends Base {
     constructor(...children: child[]) {
         super("input", ...children);
         this._component.oninput = () => this.change();

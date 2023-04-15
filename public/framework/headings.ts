@@ -24,3 +24,24 @@ export function H5(...children: child[]) {
 export function H6(...children: child[]) {
     return new Base("h6", ...children);
 }
+
+export default class Headings {
+    static H1(...children: child[]): Base {
+        return H1(...children);
+    }
+    static H2(...children: child[]): Base {
+        return H2(...children);
+    }
+    static H3(...children: child[]): Base {
+        return H3(...children);
+    }
+    static H4(...children: child[]): Base {
+        return H4(...children);
+    }
+    static H5(...children: child[]): Base {
+        return H5(...children);
+    }
+    static H6(...children: child[]): Base {
+        return H6(...children);
+    }
+}

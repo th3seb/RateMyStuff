@@ -1,8 +1,8 @@
-import { Base, HTML } from "./base.js";
-import { Input } from "./input.js";
+import { Base } from "./base.js";
+import Input from "./input.js";
 import { TextareaAttributes, child } from "./types.js";
 
-export function InText(text?: string, ...children: child[]) {
+export default function InText(text?: string, ...children: child[]) {
     const inputtext: Input = new Input(...children).addAttribute("type", "text");
     if (text) inputtext.addAttribute("value", text);
     return inputtext;

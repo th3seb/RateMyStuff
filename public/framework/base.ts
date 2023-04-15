@@ -1,4 +1,4 @@
-import { CSSProperties, HtmlEvent, child, default_font_family, myHTMLElement } from "./types.js";
+import { CSSProperties, CSSPropertiesMap, HtmlEvent, child, default_font_family, myHTMLElement } from "./types.js";
 
 export class HTML {
     private _htmlType: string;
@@ -31,6 +31,13 @@ export class HTML {
 
     addStyle(style: CSSProperties, value: string, priority?: string) {
         priority ? this._component.style.setProperty(style, value, priority) : this._component.style.setProperty(style, value);
+        return this;
+    }
+
+    addStyleFromConfig(config: CSSPropertiesMap) {
+        Object.keys(config).forEach((key) => {
+            this.addStyle(key as CSSProperties, config[key]);
+        });
         return this;
     }
 
