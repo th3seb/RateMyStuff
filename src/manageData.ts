@@ -40,16 +40,28 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
     let { username, password }: { username: string; password: string } = req.body;
-    let pa: { password: string } = db.prepare("SELECT password FROM users WHERE username = ?").get(username) as { password: string };
-    pa !== undefined && compareSync(password, pa.password) ? res.redirect("http://localhost:3000/") : res.send("false");
+    username = username.toLowerCase();
+    let pwdb: { password: string } = db.prepare("SELECT password FROM users WHERE username = ?").get(username) as { password: string };
+    pwdb !== undefined && compareSync(password, pwdb.password) ? res.redirect("http://localhost:3000/") : res.send("false");
 });
 
 //Register
+app.get("/register", (req, res) => {
+    res.sendFile("./public/html/register.html", { root: root });
+});
+
 app.post("/register", (req, res) => {
     let { username, password }: { username: string; password: string } = req.body;
+    username = username.toLowerCase();
     let encryptedPassword = hashSync(password, 10);
     db.prepare("Insert into users (username, password) Values (?, ?)").run(username, encryptedPassword);
     res.redirect("http://localhost:3000/");
+});
+
+app.post("/register/checkUsername", (req, res) => {
+    let { username }: { username: string } = req.body;
+    username = username.toLowerCase();
+    db.prepare("SELECT username FROM users WHERE username = ?").get(username) === undefined ? res.send("true") : res.send("false");
 });
 
 //Movies

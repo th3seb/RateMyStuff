@@ -41,8 +41,14 @@ export class HTML {
         return this;
     }
 
-    addAttribute(attribute: string, value: string) {
-        this._component.setAttribute(attribute, value);
+    addAttribute(attribute: string, value?: string) {
+        if (value) this._component.setAttribute(attribute, value);
+        else this._component.setAttribute(attribute, "");
+        return this;
+    }
+
+    removeAttribute(attribute: string) {
+        this._component.removeAttribute(attribute);
         return this;
     }
 

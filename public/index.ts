@@ -13,10 +13,17 @@ const movieHandler = new MovieHandler();
 
 function onStart() {
     const login = InButton("Login");
+    const register = InButton("Register");
 
     login.addEventListener("click", () => {
         A()
             .addAttribute("href", express + "login")
+            .getComponent()
+            .click();
+    });
+    register.addEventListener("click", () => {
+        A()
+            .addAttribute("href", express + "register")
             .getComponent()
             .click();
     });

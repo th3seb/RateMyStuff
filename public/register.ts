@@ -1,4 +1,5 @@
 import A from "./framework/a.js";
+import { HTML } from "./framework/base.js";
 import Br from "./framework/br.js";
 import Button from "./framework/button.js";
 import Div from "./framework/div.js";
@@ -6,6 +7,13 @@ import Headings from "./framework/headings.js";
 import Paragraph from "./framework/p.js";
 import InText from "./framework/text.js";
 import { CSSPropertiesMap } from "./framework/types.js";
+
+function check(object: HTML, method: () => void) {
+    object.addEventListener("input", method);
+    object.addEventListener("change", method);
+    object.addEventListener("keypress", method);
+    object.addEventListener("paste", method);
+}
 
 const linkStyleConfig: CSSPropertiesMap = {
     color: "#ffad0a",
@@ -43,7 +51,21 @@ const buttonStyleConfig: CSSPropertiesMap = {
     "background-color": "#2b525a",
     "font-size": "16px",
     color: "white",
-    cursor: "pointer"
+    cursor: "pointer",
+    "text-decoration": "none"
+};
+const buttonDisabledStyleConfig: CSSPropertiesMap = {
+    padding: "10px",
+    border: "1px solid #5b5b5b",
+    width: "100%",
+    "font-family": "Helvetica, sans-serif",
+    "border-radius": "5px",
+    "margin-top": "25px",
+    "background-color": "#5b5b5b",
+    "font-size": "16px",
+    color: "white",
+    cursor: "not-allowed",
+    "text-decoration": "line-through"
 };
 
 const divStyleConfig: CSSPropertiesMap = {
@@ -149,7 +171,22 @@ const buttonPhoneStyleConfig: CSSPropertiesMap = {
     "background-color": "#2b525a",
     "font-size": "16px",
     color: "white",
-    cursor: "pointer"
+    cursor: "pointer",
+    "text-decoration": "none"
+};
+
+const buttonDisabledPhoneStyleConfig: CSSPropertiesMap = {
+    padding: "10px",
+    border: "1px solid #5b5b5b",
+    width: "100%",
+    "font-family": "Helvetica, sans-serif",
+    "border-radius": "5px",
+    "margin-top": "25px",
+    "background-color": "#5b5b5b",
+    "font-size": "16px",
+    color: "white",
+    cursor: "not-allowed",
+    "text-decoration": "line-through"
 };
 
 const linkPhoneStyleConfig: CSSPropertiesMap = {
@@ -173,49 +210,121 @@ const mainPhoneStyleConfig: CSSPropertiesMap = {
 const phone = window.matchMedia("(max-width: 600px)");
 const body = document.querySelector("body");
 
-const title = Headings.H3("Login");
+const title = Headings.H3("Register");
 const name = InText().addAttribute("placeholder", "Enter your Username").addAttribute("id", "name");
 const password = InText().addAttribute("placeholder", "Enter your Password").addAttribute("id", "password").addAttribute("type", "password");
-const loginButton = Button("Sign in").addAttribute("id", "loginButton");
-const register = phone.matches
-    ? Paragraph("Don't have an account?", Br(), A("Register now!").addAttribute("href", "/register").addStyleFromConfig(linkPhoneStyleConfig))
+const passwordConfirm = InText()
+    .addAttribute("placeholder", "Confirm your Password")
+    .addAttribute("id", "password2")
+    .addAttribute("type", "password");
+const registerButton = Button("Sign Up").addAttribute("id", "registerButton");
+const login = phone.matches
+    ? Paragraph("Already have an account?", Br(), A("Login now!").addAttribute("href", "/login").addStyleFromConfig(linkPhoneStyleConfig))
           .addStyle("font-family", "Helvetica, sans-serif")
           .addStyle("color", "black")
-    : Paragraph("Don't have an account?", Br(), A("Register now!").addAttribute("href", "/register").addStyleFromConfig(linkStyleConfig)).addStyle(
+    : Paragraph("Already have an account?", Br(), A("Login now!").addAttribute("href", "/login").addStyleFromConfig(linkStyleConfig)).addStyle(
           "font-family",
           "Helvetica, sans-serif"
       );
+const textUsername = Paragraph("This Username is already taken!")
+    .addStyleFromConfig({
+        color: "red",
+        "font-family": "Helvetica, sans-serif",
+        "text-decoration": "underline",
+        display: "none",
+        margin: "0px",
+        padding: "0px",
+        "margin-top": "5px",
+        "font-size": "0.8em"
+    })
+    .addAttribute("id", "textUsername");
 
 const main = Div();
 if (phone.matches) {
     name.addStyleFromConfig(textPhoneStyleConfig);
     password.addStyleFromConfig(textPhoneStyleConfig);
-    loginButton.addStyleFromConfig(buttonPhoneStyleConfig);
+    passwordConfirm.addStyleFromConfig(textPhoneStyleConfig);
+    registerButton.addStyleFromConfig(buttonPhoneStyleConfig);
     title.addStyleFromConfig(titlePhoneStyleConfig);
 
-    const divLogin = Div(title, Br(), name, Br(), password, Br(), loginButton, register).addStyleFromConfig(LoginPhoneStyleConfig);
-    main.appendChild(divLogin).addStyle("margin", "0 auto").addStyle("text-align", "center").addStyleFromConfig(mainPhoneStyleConfig);
+    const divRegister = Div(title, Br(), name, textUsername, password, passwordConfirm, Br(), registerButton, login).addStyleFromConfig(
+        LoginPhoneStyleConfig
+    );
+    main.appendChild(divRegister).addStyle("margin", "0 auto").addStyle("text-align", "center").addStyleFromConfig(mainPhoneStyleConfig);
 
     body.style.background = "#347582";
 } else {
     name.addStyleFromConfig(textStyleConfig);
     password.addStyleFromConfig(textStyleConfig);
-    loginButton.addStyleFromConfig(buttonStyleConfig);
+    passwordConfirm.addStyleFromConfig(textStyleConfig);
+    registerButton.addStyleFromConfig(buttonStyleConfig);
     title.addStyleFromConfig(titleStyleConfig);
 
-    const divLogin = Div(Div(title, Br(), name, Br(), password, Br(), loginButton).addStyleFromConfig(LoginStyleConfig), register).addStyleFromConfig(
-        divStyleConfig
-    );
-    const subSubMain = Div(divLogin).addStyleFromConfig(subSubMainStyleConfig);
+    const divRegister = Div(
+        Div(title, Br(), name, textUsername, password, passwordConfirm, Br(), registerButton).addStyleFromConfig(LoginStyleConfig),
+        login
+    ).addStyleFromConfig(divStyleConfig);
+    const subSubMain = Div(divRegister).addStyleFromConfig(subSubMainStyleConfig);
     const subMain = Div(subSubMain).addStyleFromConfig(subMainStyleConfig);
     main.appendChild(subMain).addStyleFromConfig(mainStyleConfig);
 
     body.style.background = "linear-gradient(45deg, #3e9988, #2b525a)";
 }
 
+const checkUsername = async () => {
+    const value = name.getValue();
+
+    const text = await (
+        await fetch("/register/checkUsername", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username: value })
+        })
+    ).text();
+    if (text === "true" && value.length > 0) {
+        name.addStyle("border", "1px solid green");
+        registerButton.removeAttribute("disabled");
+        phone.matches ? registerButton.addStyleFromConfig(buttonPhoneStyleConfig) : registerButton.addStyleFromConfig(buttonStyleConfig);
+        textUsername.addStyle("display", "none");
+    } else {
+        if (!(value.length === 0)) {
+            textUsername.addStyle("display", "block");
+        }
+        name.addStyle("border", "1px solid red");
+        registerButton.addAttribute("disabled");
+        phone.matches
+            ? registerButton.addStyleFromConfig(buttonDisabledPhoneStyleConfig)
+            : registerButton.addStyleFromConfig(buttonDisabledStyleConfig);
+    }
+};
+
+const checkPassword = () => {
+    if (password.getValue() === passwordConfirm.getValue() && password.getValue().length > 0) {
+        password.addStyle("border", "1px solid green");
+        passwordConfirm.addStyle("border", "1px solid green");
+        registerButton.removeAttribute("disabled");
+        phone.matches ? registerButton.addStyleFromConfig(buttonPhoneStyleConfig) : registerButton.addStyleFromConfig(buttonStyleConfig);
+    } else {
+        password.addStyle("border", "1px solid red");
+        passwordConfirm.addStyle("border", "1px solid red");
+        registerButton.addAttribute("disabled");
+        phone.matches
+            ? registerButton.addStyleFromConfig(buttonDisabledPhoneStyleConfig)
+            : registerButton.addStyleFromConfig(buttonDisabledStyleConfig);
+    }
+};
+
+check(name, checkUsername);
+check(password, checkPassword);
+check(passwordConfirm, checkPassword);
+
 //Funktionalität
-loginButton.addEventListener("click", async () => {
-    const res = await fetch("/login", {
+registerButton.addEventListener("click", async () => {
+    console.log("click");
+
+    const res = await fetch("/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -225,10 +334,6 @@ loginButton.addEventListener("click", async () => {
             password: password.getValue()
         })
     });
-    if ((await res.text()) === "false") {
-        alert("User not found!");
-        return;
-    }
     window.location.href = res.url;
 });
 

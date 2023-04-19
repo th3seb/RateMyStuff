@@ -7,8 +7,9 @@ export default class Input extends Base {
         this._component.oninput = () => this.change();
     }
 
-    addAttribute(attribute: InputAttributes, value: string): this {
-        super.addAttribute(attribute, value);
+    addAttribute(attribute: InputAttributes, value?: string): this {
+        if (value) super.addAttribute(attribute, value);
+        else super.addAttribute(attribute);
         return this;
     }
 
