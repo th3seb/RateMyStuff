@@ -6,6 +6,7 @@ import Headings from "./framework/headings.js";
 import Paragraph from "./framework/p.js";
 import InText from "./framework/text.js";
 import { CSSPropertiesMap } from "./framework/types.js";
+import { MyEvent, checkSession } from "./lib.js";
 
 const linkStyleConfig: CSSPropertiesMap = {
     color: "#ffad0a",
@@ -173,63 +174,79 @@ const mainPhoneStyleConfig: CSSPropertiesMap = {
 const phone = window.matchMedia("(max-width: 600px)");
 const body = document.querySelector("body");
 
-const title = Headings.H3("Login");
-const name = InText().addAttribute("placeholder", "Enter your Username").addAttribute("id", "name");
-const password = InText().addAttribute("placeholder", "Enter your Password").addAttribute("id", "password").addAttribute("type", "password");
-const loginButton = Button("Sign in").addAttribute("id", "loginButton");
-const register = phone.matches
-    ? Paragraph("Don't have an account?", Br(), A("Register now!").addAttribute("href", "/register").addStyleFromConfig(linkPhoneStyleConfig))
-          .addStyle("font-family", "Helvetica, sans-serif")
-          .addStyle("color", "black")
-    : Paragraph("Don't have an account?", Br(), A("Register now!").addAttribute("href", "/register").addStyleFromConfig(linkStyleConfig)).addStyle(
-          "font-family",
-          "Helvetica, sans-serif"
-      );
+checkSession().then((ses) => {
+    if (ses.loggedIn) {
+        A().addAttribute("href", "/").getComponent().click();
+    } else {
+        const title = Headings.H3("Login");
+        const name = InText().addAttribute("placeholder", "Enter your Username").addAttribute("id", "name");
+        const password = InText().addAttribute("placeholder", "Enter your Password").addAttribute("id", "password").addAttribute("type", "password");
+        const loginButton = Button("Sign in").addAttribute("id", "loginButton");
+        const register = phone.matches
+            ? Paragraph("Don't have an account?", Br(), A("Register now!").addAttribute("href", "/register").addStyleFromConfig(linkPhoneStyleConfig))
+                  .addStyle("font-family", "Helvetica, sans-serif")
+                  .addStyle("color", "black")
+            : Paragraph(
+                  "Don't have an account?",
+                  Br(),
+                  A("Register now!").addAttribute("href", "/register").addStyleFromConfig(linkStyleConfig)
+              ).addStyle("font-family", "Helvetica, sans-serif");
 
-const main = Div();
-if (phone.matches) {
-    name.addStyleFromConfig(textPhoneStyleConfig);
-    password.addStyleFromConfig(textPhoneStyleConfig);
-    loginButton.addStyleFromConfig(buttonPhoneStyleConfig);
-    title.addStyleFromConfig(titlePhoneStyleConfig);
+        const main = Div();
+        if (phone.matches) {
+            name.addStyleFromConfig(textPhoneStyleConfig);
+            password.addStyleFromConfig(textPhoneStyleConfig);
+            loginButton.addStyleFromConfig(buttonPhoneStyleConfig);
+            title.addStyleFromConfig(titlePhoneStyleConfig);
 
-    const divLogin = Div(title, Br(), name, Br(), password, Br(), loginButton, register).addStyleFromConfig(LoginPhoneStyleConfig);
-    main.appendChild(divLogin).addStyle("margin", "0 auto").addStyle("text-align", "center").addStyleFromConfig(mainPhoneStyleConfig);
+            const divLogin = Div(title, Br(), name, Br(), password, Br(), loginButton, register).addStyleFromConfig(LoginPhoneStyleConfig);
+            main.appendChild(divLogin).addStyle("margin", "0 auto").addStyle("text-align", "center").addStyleFromConfig(mainPhoneStyleConfig);
 
-    body.style.background = "#347582";
-} else {
-    name.addStyleFromConfig(textStyleConfig);
-    password.addStyleFromConfig(textStyleConfig);
-    loginButton.addStyleFromConfig(buttonStyleConfig);
-    title.addStyleFromConfig(titleStyleConfig);
+            body.style.background = "#347582";
+        } else {
+            name.addStyleFromConfig(textStyleConfig);
+            password.addStyleFromConfig(textStyleConfig);
+            loginButton.addStyleFromConfig(buttonStyleConfig);
+            title.addStyleFromConfig(titleStyleConfig);
 
-    const divLogin = Div(Div(title, Br(), name, Br(), password, Br(), loginButton).addStyleFromConfig(LoginStyleConfig), register).addStyleFromConfig(
-        divStyleConfig
-    );
-    const subSubMain = Div(divLogin).addStyleFromConfig(subSubMainStyleConfig);
-    const subMain = Div(subSubMain).addStyleFromConfig(subMainStyleConfig);
-    main.appendChild(subMain).addStyleFromConfig(mainStyleConfig);
+            const divLogin = Div(
+                Div(title, Br(), name, Br(), password, Br(), loginButton).addStyleFromConfig(LoginStyleConfig),
+                register
+            ).addStyleFromConfig(divStyleConfig);
+            const subSubMain = Div(divLogin).addStyleFromConfig(subSubMainStyleConfig);
+            const subMain = Div(subSubMain).addStyleFromConfig(subMainStyleConfig);
+            main.appendChild(subMain).addStyleFromConfig(mainStyleConfig);
 
-    body.style.background = "linear-gradient(45deg, #3e9988, #2b525a)";
-}
+            body.style.background = "linear-gradient(45deg, #3e9988, #2b525a)";
+        }
 
-//Funktionalität
-loginButton.addEventListener("click", async () => {
-    const res = await fetch("/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: name.getValue(),
-            password: password.getValue()
-        })
-    });
-    if ((await res.text()) === "false") {
-        alert("User not found!");
-        return;
+        //Funktionalität
+        loginButton.addEventListener("click", async () => {
+            const res = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: name.getValue(),
+                    password: password.getValue()
+                })
+            });
+            const data = await res.text();
+            if (data === "false") {
+                alert("Username or Password does not exist!");
+                return;
+            } else {
+                A().addAttribute("href", "/").getComponent().click();
+                return;
+            }
+        });
+        password.addEventListener("keydown", (e) => {
+            if ((e as MyEvent).key === "Enter") {
+                loginButton.getComponent().click();
+            }
+        });
+
+        body.appendChild(main.getComponent());
     }
-    window.location.href = res.url;
 });
-
-body.appendChild(main.getComponent());

@@ -38,9 +38,9 @@ export class MovieElement extends Base {
 
     protected render(movie_id: string, name: string, pic: string, desc: string, rating: number) {
         let shortDesc = "";
-        if (desc.length > 150) {
-            if (desc.charAt(149) === " ") shortDesc = desc.substring(0, 149) + "...";
-            else shortDesc = desc.substring(0, 150) + "...";
+        if (desc.length > 120) {
+            if (desc.charAt(119) === " ") shortDesc = desc.substring(0, 119) + "...";
+            else shortDesc = desc.substring(0, 120) + "...";
         } else shortDesc = desc;
 
         const titleDiv = H1(name).addStyle("margin", "0 auto").addStyle("font-size", "1.25em");

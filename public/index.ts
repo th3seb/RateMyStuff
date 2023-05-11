@@ -6,13 +6,20 @@ import Div from "./framework/div.js";
 import InNumber from "./framework/number.js";
 import InText, { TextArea } from "./framework/text.js";
 import Movie from "./framework/types.js";
+import { checkSession } from "./lib.js";
 import { MovieHandler, express } from "./movieHandler.js";
 
 const div: HTML = Div();
 const movieHandler = new MovieHandler();
 
-function onStart() {
+async function onStart() {
+    let loggedIn = false;
+    const ses = await checkSession();
+
+    ses.loggedIn ? (loggedIn = true) : (loggedIn = false);
+
     const login = InButton("Login");
+    const logout = InButton("Logout");
     const register = InButton("Register");
 
     login.addEventListener("click", () => {
@@ -21,12 +28,19 @@ function onStart() {
             .getComponent()
             .click();
     });
+    logout.addEventListener("click", async () => {
+        const res = await fetch(express + "logout", {
+            method: "GET"
+        });
+        window.location.href = res.url;
+    });
     register.addEventListener("click", () => {
         A()
             .addAttribute("href", express + "register")
             .getComponent()
             .click();
     });
+
     const movies = movieHandler.getMovies();
     movies.then((data) => {
         data.forEach((movie: Movie) => {
@@ -72,7 +86,8 @@ function onStart() {
     const body: HTMLElement | null = document.querySelector("body");
     if (!body) return;
 
-    body.appendChild(Div(login).addStyle("text-align", "right").getComponent());
+    if (!loggedIn) body.appendChild(Div(login.addStyle("margin-right", "0.5em"), register).addStyle("text-align", "right").getComponent());
+    else body.appendChild(Div(logout).addStyle("text-align", "right").getComponent());
     body.appendChild(div.getComponent());
     body.appendChild(saveMovieDiv.getComponent());
     body.appendChild(deleteMovieDiv.getComponent());

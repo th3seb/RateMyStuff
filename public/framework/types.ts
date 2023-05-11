@@ -2,7 +2,8 @@ import { Base } from "./base.js";
 
 export type child = Base | string;
 
-export const default_font_family = "Author-Regular";
+export const default_font_family =
+    "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif";
 
 export default interface Movie {
     movie_id: string;
