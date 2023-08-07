@@ -170,8 +170,9 @@ app.get("/movies/liked/:id", (req, res) => {
     }
 });
 
+//My List
+app.post("/movies/myList", (req, res) => {});
+
 app.get("*", (req, res) => {
     res.sendFile("./public/html/error.html", { root: root });
 });
-
-//TODO: Look up sessions for login and register
